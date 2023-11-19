@@ -11,13 +11,11 @@ import os
 import threading
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What is the happiest color?"
-URLsGotten = GoogleSearcher.GetArray(QueryString)
-URLsGotten = URLsGotten[:3]  # Keep x elements elements
-How_Many_Pics_Per_URL = 10
+QueryString = "What is the hardest subject to learn?"
 
 # Will this run cost money and use ChatGPT?
 SpendMoney = False
+
 # Define your prompt to ChatGPT
 FrontOfPrompt = "Please analyze the following article for tone, accuracy, bias, and motivation, then summarize into a no more than 50 word response: " 
 
@@ -69,6 +67,33 @@ def loading_animation():
 
 def print_with_animation(text):
     print(text, end='\r')
+
+def discern_good_url(url, timeout=2):
+    try:
+        if timeout <= 0:
+            timeout = 0.1  # Set a minimum positive value for timeout
+    
+        response = requests.get(url, timeout=timeout)
+        if response.status_code >= 400:
+            print(f"Warning: {url} returned status code {response.status_code}")
+            response.raise_for_status()  # Raise an exception for other errors (e.g., network issues)
+            logging.info(f"Warning: {url} returned status code {response.status_code}")
+            return None
+        return url
+        
+    except requests.exceptions.Timeout:
+        print(f"Timeout while accessing {url}")
+        logging.info(f"Timeout while accessing {url}")
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error accessing {url}: {e}")
+        logging.info(f"Error accessing {url}: {e}")
+        return None
+    except ValueError as ve:
+        print(f"ValueError: {ve}")
+        logging.info(f"ValueError: {ve}")
+        return None
+
 
 def use_soup_with_timeout(url, timeout=2):
     try:
@@ -125,15 +150,23 @@ def process_url_into_image_url(article, index):
         article.PIC_Array.append(":( See Failure in log...")
         logging.info(article.URL + ' failed soup_pic')
 
-animation_generator = loading_animation()
+
 
 def animation_thread_function():
     for char in animation_generator:
         print_with_animation(f'{char} Spinning...')
         time.sleep(0.1)
+
+animation_generator = loading_animation()
     
 print("Standby")
 logging.info("===Start of the log, enjoy!===")
+
+#Get all the URLs to do logic on:
+URLsGotten = GoogleSearcher.GetArray(QueryString)
+URLsGotten = URLsGotten[:30]  # Keep x elements elements
+GoodURLs = []
+How_Many_Pics_Per_URL = 10
 
 # Start the animation thread in parallel so there's something to look at while running
 animation_thread = threading.Thread(target=animation_thread_function)
@@ -142,18 +175,35 @@ animation_thread.start()
 # Create an empty list to store Article objects
 ArticleCollection = []
 
-# Iterate through URLs and create Article objects
+#Go through URLsGotten and get good ones back
 for i, url in enumerate(URLsGotten):
+    logging.debug("===About to run good_url===")
+    good_url = discern_good_url(url, i)
+    #good_url = True
+    logging.debug("===About to append to GoodURLs===")
+    if good_url and good_url not in GoodURLs:
+        GoodURLs.append(good_url)
+        
+#print(GoodURLs)
+logging.info(f"URLsGotten Array length: {len(URLsGotten)}")
+logging.info(f"URLsGotten Array: {URLsGotten}")
+logging.info(f"GoodURLs Array length: {len(GoodURLs)}")
+logging.info(f"GoodURLs Array: {GoodURLs}")
+
+# Iterate through URLs and create Article objects
+for i, url in enumerate(GoodURLs):
     # For now, let's assume you have some dummy text and PIC_Array for each article
     dummy_text = f"Sample text for article {i+1}"
-    dummy_pic_array = [f"pic_url_{j}" for j in range(len(URLsGotten))] # Just a dummy list of pic URLs
+    dummy_pic_array = [f"pic_url_{j}" for j in range(len(GoodURLs))] # Just a dummy list of pic URLs
     
     # Create an Article object
     article = Article(URL=url, Text=dummy_text, PIC_Array=dummy_pic_array, AItext = "Compwizdom", QualityArticle = False)
     
     # Add the article to the collection
     ArticleCollection.append(article)
-    logging.info(f"article{i}'s URL is: {ArticleCollection[i].URL}")
+    logging.info(f"article {i}'s URL is: {ArticleCollection[i].URL}")
+    
+
 
 
 print()  # Print a new line after the animation is done
@@ -178,8 +228,8 @@ for i, article in enumerate(ArticleCollection):
     process_url_into_text(ArticleCollection[i], i)
     #logging.info(f"{ArticleCollection[i].URL} is the URL from article {i}") TODO: Make this work with the article's text
     process_url_into_image_url(ArticleCollection[i], i)
-    logging.info(f"article{i}'s pics are {ArticleCollection[i].PIC_Array}")
-    logging.debug(f'URL from article {i} = {article.URL}')
+    logging.info(f"article {i}'s pics are {ArticleCollection[i].PIC_Array}")
+    logging.debug(f'URL from article {i} = {ArticleCollection[i].URL}')
     
     if SpendMoney:
         ArticleCollection[i].AItext = generate_response(FrontOfPrompt + ArticleCollection[i].Text)  # COSTS MONEY
@@ -202,14 +252,14 @@ def generate_html():
     header_style1 = "width: 600px; height: 20px; padding: 10px; border: 2px solid black; text-align: center; background-color: #007bff; color: white; font-family: Arial, sans-serif; font-size: 20px;"
     header_style2 = "width: 200px; height: 20px; padding: 10px; border: 2px solid black; text-align: center; background-color: #007bff; color: white; font-family: Arial, sans-serif; font-size: 20px;"
 
-    for i in range(len(URLsGotten)):
+    for i in range(len(GoodURLs)):
         # Build a string with image tags for each image in PIC_Array
         image_tags = ''.join([f'<img src="{pic_url}" alt="Image" style="max-width: 100%; height: auto;">' for pic_url in ArticleCollection[i].PIC_Array])
         
         table_rows += f'''
             <tr>
                 <td style="{cell_style1}">
-                    {URLsGotten[i]}<br>{image_tags}
+                    {GoodURLs[i]}<br>{image_tags}
                 </td>
                 <td style="{cell_style1}">
                     {ArticleCollection[i].AItext}
