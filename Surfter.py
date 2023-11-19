@@ -14,7 +14,7 @@ import re
 from bs4 import BeautifulSoup
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What tastes the bestest?"
+QueryString = "What planet should we go to next?"
 How_many_URLs_to_get = 6
 
 # Will this run cost money and use ChatGPT?
@@ -164,12 +164,12 @@ def process_url_into_image_url(article, index):
 
 def animation_thread_function():
     for char in animation_generator:
-        print_with_animation(f'{char} Spinning...')
+        print_with_animation(f'{char} Surfting --~*\~--')
         time.sleep(0.1)
 
 animation_generator = loading_animation()
     
-print("Surfting --~*\~--")
+print("It's alive!")
 logging.info("===Start of the log, enjoy!===")
 
 # Start the animation thread in parallel so there's something to look at while running
