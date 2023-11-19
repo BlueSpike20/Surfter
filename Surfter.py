@@ -14,7 +14,7 @@ import re
 from bs4 import BeautifulSoup
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What are the best flowers?"
+QueryString = "What smells the best?"
 
 # Will this run cost money and use ChatGPT?
 SpendMoney = False
@@ -67,7 +67,7 @@ class Article:
 sanitized_query_string = re.sub(r'[^\w\s]', '_', QueryString)
 
 # Now you can use it in the file_path
-file_path = f"{WorkingDirectory}\\{sanitized_query_string}.html"
+file_path = f"{WorkingDirectory}\\SurftArchive\{sanitized_query_string}.html"
 
 def loading_animation():
     animation = "|/-\\"
@@ -179,7 +179,7 @@ animation_thread.start()
 
 #Get all the URLs to do logic on:
 URLsGotten = GoogleSearcher.GetArray(QueryString)
-URLsGotten = URLsGotten[:10]  # Keep x elements elements
+URLsGotten = URLsGotten[:2]  # Keep x elements elements
 GoodURLs = []
 How_Many_Pics_Per_URL = 10
 
