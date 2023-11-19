@@ -288,7 +288,7 @@ def generate_html():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>BlueSpike's InfoPage</title>
+        <title>{FrontOfPrompt}Surfter</title>
         <style>
             body {{
                 background-image: url('{background_image_url}');
