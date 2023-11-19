@@ -14,8 +14,8 @@ import re
 from bs4 import BeautifulSoup
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What frequencies are harmful to humans?"
-How_many_URLs_to_get = 20
+QueryString = "What companies produce the most toxins?"
+How_many_URLs_to_get = 15
 
 # Will this run cost money and use ChatGPT?
 SpendMoney = False
@@ -49,7 +49,7 @@ sys.stderr = log_file
 logging.basicConfig(filename='output.log', level=logging.INFO)
 
 # Set up OpenAI API credentials
-openai.api_key = 'lol'
+openai.api_key = 'GitUrOwn'
 
 class Article:
     def __init__(self, URL, Text, PIC_Array, AItext, QualityArticle):
@@ -68,7 +68,10 @@ class Article:
 sanitized_query_string = re.sub(r'[^\w\s]', '_', QueryString)
 
 # Now you can use it in the file_path
-file_path = f"{WorkingDirectory}\\SurftArchive\{sanitized_query_string}_{How_many_URLs_to_get}_deep.html"
+if SpendMoney == True:
+    file_path = f"{WorkingDirectory}\\Paid2Surft\{sanitized_query_string}{How_many_URLs_to_get}_deep.html"
+else:
+    file_path = f"{WorkingDirectory}\\SurftArchive\{sanitized_query_string}{How_many_URLs_to_get}_deep.html"
 
 def loading_animation():
     animation = "|/-\\"
