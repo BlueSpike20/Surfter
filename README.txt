@@ -15,4 +15,6 @@ TODO: Break the generate_html function out of Surfter.py and make it its own fil
 
 TODO: Create a SurftArchive folder that holds all the Surft pages.
 
+TODO: Create logic that removes gpt request for articles that fail souptext. Either keep image or step over before rendering.
+
 
