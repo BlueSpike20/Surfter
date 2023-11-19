@@ -13,4 +13,6 @@ TODO: Once we have the column of AI responses, do another AI summary of the summ
 
 TODO: Break the generate_html function out of Surfter.py and make it its own file. 
 
+TODO: Create a SurftArchive folder that holds all the Surft pages.
+
 
