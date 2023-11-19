@@ -14,8 +14,8 @@ import re
 from bs4 import BeautifulSoup
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What planet should we go to next?"
-How_many_URLs_to_get = 6
+QueryString = "What frequencies are harmful to humans?"
+How_many_URLs_to_get = 20
 
 # Will this run cost money and use ChatGPT?
 SpendMoney = False
@@ -68,7 +68,7 @@ class Article:
 sanitized_query_string = re.sub(r'[^\w\s]', '_', QueryString)
 
 # Now you can use it in the file_path
-file_path = f"{WorkingDirectory}\\SurftArchive\{sanitized_query_string}.html"
+file_path = f"{WorkingDirectory}\\SurftArchive\{sanitized_query_string}_{How_many_URLs_to_get}_deep.html"
 
 def loading_animation():
     animation = "|/-\\"
