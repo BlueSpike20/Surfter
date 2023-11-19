@@ -14,8 +14,8 @@ import re
 from bs4 import BeautifulSoup
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What tastes the best?"
-How_many_URLs_to_get = 4
+QueryString = "What tastes the bestest?"
+How_many_URLs_to_get = 6
 
 # Will this run cost money and use ChatGPT?
 SpendMoney = False
@@ -169,7 +169,7 @@ def animation_thread_function():
 
 animation_generator = loading_animation()
     
-print("Standby")
+print("Surfting --~*\~--")
 logging.info("===Start of the log, enjoy!===")
 
 # Start the animation thread in parallel so there's something to look at while running
@@ -287,7 +287,7 @@ def generate_html():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>{FrontOfPrompt} Surft</title>
+        <title>{QueryString} Surft</title>
         <style>
             body {{
                 background-image: url('{background_image_url}');

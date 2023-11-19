@@ -17,4 +17,4 @@ TODO: Create a PaidSurftArchive folder that holds all the paid pages. Auto route
 
 TODO: Create logic that removes gpt request for articles that fail souptext. Either keep image or step over before rendering.
 
-
+TODO: If HTML filename exists in the archive, need to stomp. Also need to add number count to filename.
