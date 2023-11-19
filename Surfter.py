@@ -10,6 +10,8 @@ import logging
 import os
 import threading
 import sys
+import re
+from bs4 import BeautifulSoup
 
 # Find URLs from a query string given the following paramaters
 QueryString = "What are the best flowers?"
@@ -61,8 +63,11 @@ class Article:
         return repr((self.URL, self.Text, self.PIC_Array, self.AItext, self.QualityArticle))
 
 
-from bs4 import BeautifulSoup
-file_path = WorkingDirectory + '\Sample.html'
+# Sanitize the QueryString for use as a filename
+sanitized_query_string = re.sub(r'[^\w\s]', '_', QueryString)
+
+# Now you can use it in the file_path
+file_path = f"{WorkingDirectory}\\{sanitized_query_string}.html"
 
 def loading_animation():
     animation = "|/-\\"
