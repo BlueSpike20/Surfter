@@ -11,9 +11,9 @@ import os
 import threading
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What frequencies of sound make humans happy?"
+QueryString = "What is the happiest color?"
 URLsGotten = GoogleSearcher.GetArray(QueryString)
-URLsGotten = URLsGotten[:5]  # Keep x elements elements
+URLsGotten = URLsGotten[:3]  # Keep x elements elements
 How_Many_Pics_Per_URL = 10
 
 # Will this run cost money and use ChatGPT?
@@ -45,15 +45,16 @@ logging.basicConfig(filename='output.log', level=logging.INFO)
 openai.api_key = 'Not giving out my key :)'
 
 class Article:
-    def __init__(self, URL, Text, PIC_Array, AItext):
+    def __init__(self, URL, Text, PIC_Array, AItext, QualityArticle):
         # self.name = name TODO
         self.URL = URL
         self.Text = Text
         self.PIC_Array = PIC_Array
         self.AItext = AItext
+        self.QualityArticle = QualityArticle
     
     def __repr__(self):
-        return repr((self.URL, self.Text, self.PIC_Array, self.AItext))
+        return repr((self.URL, self.Text, self.PIC_Array, self.AItext, self.QualityArticle))
 
 
 from bs4 import BeautifulSoup
@@ -121,7 +122,7 @@ def process_url_into_image_url(article, index):
         article.PIC_Array.extend(soup[:How_Many_Pics_Per_URL])
         #article.PIC_Array.extend(url for url in article.PIC_Array)
     else:
-        Souped_URLs_to_image_URLs.append(":( See Failure in log...")
+        article.PIC_Array.append(":( See Failure in log...")
         logging.info(article.URL + ' failed soup_pic')
 
 animation_generator = loading_animation()
@@ -148,7 +149,7 @@ for i, url in enumerate(URLsGotten):
     dummy_pic_array = [f"pic_url_{j}" for j in range(len(URLsGotten))] # Just a dummy list of pic URLs
     
     # Create an Article object
-    article = Article(URL=url, Text=dummy_text, PIC_Array=dummy_pic_array, AItext = "Compwizdom")
+    article = Article(URL=url, Text=dummy_text, PIC_Array=dummy_pic_array, AItext = "Compwizdom", QualityArticle = False)
     
     # Add the article to the collection
     ArticleCollection.append(article)
