@@ -9,15 +9,16 @@ import URLSouperPIC
 import logging
 import os
 import threading
+import sys
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What is the hardest subject to learn?"
+QueryString = "When will capitalisim in america end?"
 
 # Will this run cost money and use ChatGPT?
 SpendMoney = False
 
 # Define your prompt to ChatGPT
-FrontOfPrompt = "Please analyze the following article for tone, accuracy, bias, and motivation, then summarize into a no more than 50 word response: " 
+FrontOfPrompt = "Please analyze the following article for tone, accuracy, bias, and motivation, then summarize it into a no more than 50 word response: " 
 
 # Set the working directory
 WorkingDirectory = os.path.dirname(os.path.realpath(__file__))
@@ -36,11 +37,16 @@ else:
     print(f"{log_file_path} does not exist.")
     #logging.info(f"{log_file_path} deleted.")
 
+# Redirect stdout and stderr to a file
+log_file = open(log_file_path, 'a')  # 'a' mode appends to the file
+#sys.stdout = log_file
+sys.stderr = log_file
+
 # Configure the logging
 logging.basicConfig(filename='output.log', level=logging.INFO)
 
 # Set up OpenAI API credentials
-openai.api_key = 'Not giving out my key :)'
+openai.api_key = 'lol'
 
 class Article:
     def __init__(self, URL, Text, PIC_Array, AItext, QualityArticle):
@@ -162,15 +168,17 @@ animation_generator = loading_animation()
 print("Standby")
 logging.info("===Start of the log, enjoy!===")
 
-#Get all the URLs to do logic on:
-URLsGotten = GoogleSearcher.GetArray(QueryString)
-URLsGotten = URLsGotten[:30]  # Keep x elements elements
-GoodURLs = []
-How_Many_Pics_Per_URL = 10
-
 # Start the animation thread in parallel so there's something to look at while running
 animation_thread = threading.Thread(target=animation_thread_function)
 animation_thread.start()
+
+#Get all the URLs to do logic on:
+URLsGotten = GoogleSearcher.GetArray(QueryString)
+URLsGotten = URLsGotten[:10]  # Keep x elements elements
+GoodURLs = []
+How_Many_Pics_Per_URL = 10
+
+
 
 # Create an empty list to store Article objects
 ArticleCollection = []
@@ -316,5 +324,14 @@ webbrowser.open(file_path)
 animation_thread.join()
 
 print("Hit Something!")
+
+
+
+
 logging.info("===End of the log, enjoy!===")
 #input()
+
+# Close the log file and restore stdout and stderr
+log_file.close()
+#sys.stdout = sys.__stdout__
+sys.stderr = sys.__stderr__
