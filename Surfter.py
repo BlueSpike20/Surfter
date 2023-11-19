@@ -12,7 +12,7 @@ import threading
 import sys
 
 # Find URLs from a query string given the following paramaters
-QueryString = "When will capitalisim in america end?"
+QueryString = "What are the best flowers?"
 
 # Will this run cost money and use ChatGPT?
 SpendMoney = False
