@@ -14,7 +14,8 @@ import re
 from bs4 import BeautifulSoup
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What smells the best?"
+QueryString = "What tastes the best?"
+How_many_URLs_to_get = 4
 
 # Will this run cost money and use ChatGPT?
 SpendMoney = False
@@ -161,8 +162,6 @@ def process_url_into_image_url(article, index):
         article.PIC_Array.append(":( See Failure in log...")
         logging.info(article.URL + ' failed soup_pic')
 
-
-
 def animation_thread_function():
     for char in animation_generator:
         print_with_animation(f'{char} Spinning...')
@@ -179,7 +178,7 @@ animation_thread.start()
 
 #Get all the URLs to do logic on:
 URLsGotten = GoogleSearcher.GetArray(QueryString)
-URLsGotten = URLsGotten[:2]  # Keep x elements elements
+URLsGotten = URLsGotten[:How_many_URLs_to_get]  # Keep x elements elements
 GoodURLs = []
 How_Many_Pics_Per_URL = 10
 
@@ -251,7 +250,7 @@ for i, article in enumerate(ArticleCollection):
 
 
 def generate_html():
-    title = "My Attempt to understand '" + QueryString + "' with OpenAi:"
+    title = "Surft Results: '" + QueryString + "':"
     logo_image_url = os.path.join(WorkingDirectory, 'images', 'InfoSorter_thumb.jpg')
     background_image_url = os.path.join(WorkingDirectory, 'Images', 'Background2.jpg')
     # Replace backslashes with forward slashes
@@ -288,7 +287,7 @@ def generate_html():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>{FrontOfPrompt}Surfter</title>
+        <title>{FrontOfPrompt} Surft</title>
         <style>
             body {{
                 background-image: url('{background_image_url}');
