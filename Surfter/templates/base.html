@@ -1,0 +1,45 @@
+{% load static %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surfter</title>
+    <style>
+        body {
+            background-image: url("{% static 'C:\Users\blues\projects\Surfter\Surfter\static\Background2.jpg' %}");
+            /* Use double backslashes or forward slashes in the URL */
+            background-size: cover; /* Optional: Adjust the background size */
+        }
+    </style>
+</head>
+<body bgcolor="cyan">
+    <img src="{% static 'C:\Users\blues\projects\Surfter\Surfter\static\InfoSorter_thumb.jpg' %}" alt="Image" style="float: left; margin-right: 20px; vertical-align: middle; margin-bottom: 10px;">
+    <h1 style="display: inline-block; vertical-align: middle; text-align: center;"></h1>
+      
+    <!-- Use an anchor tag instead of a form -->
+    <a href="{% url 'home' %}">
+    <button>Home Surft</button>
+    </a>
+    
+    {% if user.is_authenticated %}
+    <li>Hello, {{user.first_name}} <button>Your Surfts WIP</button></li>
+    <li><a href="{% url 'logout' %}"><button>Logout</button></a></li>
+    {% else %}
+    <a href="{% url 'register' %}">
+        <button>Register here to Surft</button>
+    </a>
+    <a href="{% url 'login' %}">
+        <button>Login here to Surft</button>
+    </a>
+    {% endif %}
+    <br>
+    </br>  
+    {% block content %}
+    {% endblock %}
+</body>
+
+</html>

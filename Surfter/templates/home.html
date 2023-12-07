@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<h1>Hello {{user.username}}, welcome back to Surfter v0.2!</h1>
+{% else %}
+<h1>Hello stranger, welcome to Surfter v0.2!</h1>
+{% endif %}
+
+<form action="SurftResults" method="post">
+
+    {% csrf_token %}
+
+    What do you want to know?: <input type="text" name="queryprompt"><br>
+    How deep to go?: <input type="text" name="num2"><br>
+    <input type="submit">
+    
+</form>
+
+{% endblock %}

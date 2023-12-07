@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<table style="width: 100%; border-collapse: collapse;">
+    <tr>
+        <th>Article URL and Pic</th>
+        <th> You Surft : {{query}} {{depth}} deep! </th>
+        <th>Raw Text</th>
+    </tr>
+
+{% for article in articlecollection  %}
+        <tr>
+            <td style="padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 20px">{{ article.URL }}
+                <img src="{{article.img.url}}" alt="">
+            </td>
+            <br>
+            <td style="padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 20px">{{article.AItext}}</td>
+            <td style="padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 10px">{{article.Text}}</td>
+        </tr>
+{% endfor %} 
+
+</table>
+
+{% endblock %}

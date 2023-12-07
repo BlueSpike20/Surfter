@@ -1,4 +1,4 @@
-__pycache__/
+**/__pycache__/
 venv/
-output.log
-Sample.html
+db.sqlite3
+Surfter/settings.py
