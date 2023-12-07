@@ -14,11 +14,11 @@ import re
 from bs4 import BeautifulSoup
 
 # Find URLs from a query string given the following paramaters
-QueryString = "What are the most cost effective LED juggling clubs for sale?"
-How_many_URLs_to_get = 8
+QueryString = "Are bubbles round?"
+How_many_URLs_to_get = 2
 
 # Will this run cost money and use ChatGPT?
-SpendMoney = False
+SpendMoney = True
 
 # Define your prompt to ChatGPT
 FrontOfPrompt = "Please analyze the following article for tone, accuracy, bias, and motivation, then summarize it into a no more than 50 word response: " 
@@ -49,7 +49,7 @@ sys.stderr = log_file
 logging.basicConfig(filename='output.log', level=logging.INFO)
 
 # Set up OpenAI API credentials
-openai.api_key = 'Nope'
+openai.api_key = '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'
 
 class Article:
     def __init__(self, URL, Text, PIC_Array, AItext, QualityArticle):
