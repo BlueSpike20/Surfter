@@ -14,6 +14,50 @@
             /* Use double backslashes or forward slashes in the URL */
             background-size: cover; /* Optional: Adjust the background size */
         }
+
+        /* Define some sweet style classes */
+        .myCellStyle1 {
+            padding: 10px;
+            border: 2px solid black;
+            text-align: left;
+            vertical-align: top;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            }
+
+        .myCellStyle2 { 
+            padding: 10px;
+            border: 2px solid black;
+            text-align: left;
+            vertical-align: top;
+            font-family: Arial, sans-serif;
+            font-size: 10px}
+
+        .myHeaderStyle1 { 
+            width: 600px;
+            height: 20px;
+            padding: 10px;
+            border: 2px solid black;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 20px
+            }
+
+        .myHeaderStyle2 { 
+            width: 200px;
+            height: 20px;
+            padding: 10px;
+            border: 2px solid black;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 20px
+            }
+            
+
     </style>
 </head>
 <body bgcolor="cyan">
@@ -36,8 +80,7 @@
         <button>Login here to Surft</button>
     </a>
     {% endif %}
-    <br>
-    </br>  
+
     {% block content %}
     {% endblock %}
 </body>

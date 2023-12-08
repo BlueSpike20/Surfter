@@ -2,22 +2,18 @@
 
 {% block content %}
 
-
-<table style="width: 100%; border-collapse: collapse;">
+<table>
     <tr>
-        <th>Article URL and Pic</th>
-        <th> You Surft : {{query}} {{depth}} deep! </th>
-        <th>Raw Text</th>
+        <th class="myHeaderStyle1">Article URL and Pic</th>
+        <th class="myHeaderStyle1"> You Surft : {{query}} {{depth}} deep! </th>
+        <th class="myHeaderStyle2">Raw Text</th>
     </tr>
 
 {% for article in articlecollection  %}
         <tr>
-            <td style="padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 20px">{{ article.URL }}
-                <img src="{{article.img.url}}" alt="">
-            </td>
-            <br>
-            <td style="padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 20px">{{article.AItext}}</td>
-            <td style="padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 10px">{{article.Text}}</td>
+            <td class="myCellStyle1">{{ article.URL }}</td>
+            <td class="myCellStyle1">{{article.AItext}}</td>
+            <td class="myCellStyle2">{{article.Text}}</td>
         </tr>
 {% endfor %} 
 

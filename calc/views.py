@@ -1,17 +1,26 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Article
+from .models import Analysis
 from googlesearch import search
 import html
+import requests
+import logging
+
+from bs4 import BeautifulSoup
 
 # Create your views here, and this seems to work when http://127.0.0.1:8000/home called.
+
+#Defining some global style values:
+#cell_style1 = "padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 20px;"
+
 def home(request):
     return render(request, 'home.html', {'name': 'Stranger'})
 
-def GetArray(query):
+def GetArray(query, num_results):
     results = []
     # Perform the search
-    for result in search(query, num_results=5):
+    for result in search(query, num_results):
         results.append(result)
     return results
     print(results)
@@ -27,64 +36,124 @@ def SurftResults(request):
     # Define your prompt to ChatGPT
     FrontOfPrompt = "Please analyze the following article for tone, accuracy, bias, and motivation, then summarize it into a no more than 50 word response: " 
 
-    #TODO: Putting in temp data to get the object working. Need to come back and make real with process_url_into_soup
-    #article1 = Article("url", "text_value", "pic_array_value", "aitext_value", "quality_article_value")
-
-    #article1.URL = "soup"
-    #article1.Text = "soup"
-    #article1.PIC_Array = []
-    #article1.AItext = "AItext"
-    #article1.QualityArticle = "QualityArticle"
-
-    
-    table_rows = ""
-    cell_style1 = "padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 20px;"
-    cell_style2 = "padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 10px; word-wrap: break-word;"
-    header_style1 = "width: 600px; height: 20px; padding: 10px; border: 2px solid black; text-align: center; background-color: #007bff; color: white; font-family: Arial, sans-serif; font-size: 20px;"
-    header_style2 = "width: 200px; height: 20px; padding: 10px; border: 2px solid black; text-align: center; background-color: #007bff; color: white; font-family: Arial, sans-serif; font-size: 20px;"
-
     queryprompt = str(request.POST["queryprompt"])
     How_many_URLs_to_get = int(request.POST["num2"])
 
+    analysis = Analysis(query = queryprompt)
+    analysis.save()
+
     #Get the raw URLs from GoogleSearcher.GetArray to be Surfted
-    URLsGotten = GetArray(queryprompt)
+    URLsGotten = GetArray(queryprompt, How_many_URLs_to_get * 2)
     URLsGotten = URLsGotten[:How_many_URLs_to_get]  # Keep x elements elements
+    GoodURLs = []
     
     #TODO: Include the real vetting of URLs
-    GoodURLs = URLsGotten
+    #Go through URLsGotten and get good ones back
+    for i, url in enumerate(URLsGotten):
+        #logging.debug("===About to run good_url===")
+        good_url = discern_good_url(url, i)
+        #good_url = True
+        #logging.debug("===About to append to GoodURLs===")
+        if good_url and good_url not in GoodURLs:
+            GoodURLs.append(good_url)
 
     # Create an empty list to store Article objects
     ArticleCollection = []
     
-    # Iterate through URLs and create Article objects
-    #for i, url in enumerate(GoodURLs):
+    # Iterate through URLs and create article objects before pumping data into them:
+    for i, url in enumerate(GoodURLs):
         # For now, let's assume you have some dummy text and PIC_Array for each article
-        #dummy_text = f"Sample text for article {i+1}"
+        dummyText = "Placeholder article text"
+        #process_url_into_image_url(ArticleCollection[i], i)
         #dummy_pic_array = [f"pic_url_{j}" for j in range(len(GoodURLs))] # Just a dummy list of pic URLs
-        #dummy_aitext = f"Compwizdom for article {i+1}"
+        dummy_aitext = f"Compwizdom for article {i+1}"
         
         # Create an Article object
-        #article = Article(URL=url, Text=dummy_text, AItext = dummy_aitext, QualityArticle = False)
+        article = Article(query = queryprompt, URL = url, Text = dummyText, AItext = dummy_aitext, QualityArticle = False)
+        article.save()
         
         # Add the article to the collection
-        #ArticleCollection.append(article)
+        ArticleCollection.append(article)
         #logging.info(f"article {i}'s URL is: {ArticleCollection[i].URL}")
 
-    ArticleCollection = Article.objects.all()
-
-    #TODO: change this to use GoodURLs
-    #for i in range(How_many_URLs_to_get):
-        # Build a string with image tags for each image in PIC_Array
-        # TODO: image_tags = ''.join([f'<img src="{pic_url}" alt="Image" style="max-width: 100%; height: auto;">' for pic_url in ArticleCollection[i].PIC_Array])
-
-        #table_rows += f'''
-            #<tr>
-                #<td style="{cell_style1}">{GoodURLs[i]}</td>
-                #<td style="{cell_style1}">{ArticleCollection[i].AItext}</td>
-                #<td style="{cell_style1}">{(ArticleCollection[i].Text)}</td>
-            #</tr>
-        #'''
+        processedtext = process_url_into_text(url, i, ArticleCollection)
+        article.save()
+        if processedtext is not None:
+            article.Text = processedtext
+            article.save()
+        else:
+            # Handle the case where processedtext is None
+            print(f"Skipping article {i+1} due to None processedtext")
+            logging.debug(f"Skipping article {i+1} due to None processedtext")
+        
+    #ArticleCollection = Article.objects.all()
 
     #TODO: I removed, <, 'article1': article1> from the following context line till I understand what objects to pass
-    context = {'tablehtml': table_rows, 'query': queryprompt, 'depth': How_many_URLs_to_get, 'goodurls':GoodURLs, 'articlecollection': ArticleCollection, 'cellstyle1': cell_style1}
+    context = {'query': queryprompt, 'depth': How_many_URLs_to_get, 'goodurls':GoodURLs, 'articlecollection': ArticleCollection}
     return render(request, 'results.html', context)
+
+#Turns the paragragh text at the given URL into readable text.
+def use_soup(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Find all paragraph tags in the soup
+    paragraphs = soup.find_all('p')
+        
+    # Extract text from each paragraph and concatenate
+    paragraph_text = ""
+    for paragraph in paragraphs:
+        paragraph_text += paragraph.get_text() + " "
+
+    return paragraph_text.strip()
+
+def use_soup_with_timeout(url, timeout=2):
+    try:
+        response = requests.get(url, timeout=timeout)
+        if response.status_code >= 400:
+            print(f"Warning: {url} returned status code {response.status_code}")
+            response.raise_for_status()  # Raise an exception for other errors (e.g., network issues)
+            pass
+        return use_soup(url)
+        
+    except requests.exceptions.Timeout:
+        print(f"Timeout while accessing {url}")
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error accessing {url}: {e}")
+        return None
+    
+def process_url_into_text(url, i, ArticleCollection):
+    soup = use_soup_with_timeout(url)
+    if soup:
+        #article.Text = []
+        ArticleCollection[i].Text = soup
+    else:
+        #article.Text = []
+        ArticleCollection[i].Text = f" :( See Failure for {url} in log..."
+
+def discern_good_url(url, timeout=2):
+    try:
+        if timeout <= 0:
+            timeout = 0.1  # Set a minimum positive value for timeout
+    
+        response = requests.get(url, timeout=timeout)
+        if response.status_code >= 400:
+            print(f"Warning: {url} returned status code {response.status_code}")
+            response.raise_for_status()  # Raise an exception for other errors (e.g., network issues)
+            #logging.info(f"Warning: {url} returned status code {response.status_code}")
+            return None
+        return url
+        
+    except requests.exceptions.Timeout:
+        print(f"Timeout while accessing {url}")
+        #logging.info(f"Timeout while accessing {url}")
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error accessing {url}: {e}")
+        #logging.info(f"Error accessing {url}: {e}")
+        return None
+    except ValueError as ve:
+        print(f"ValueError: {ve}")
+        #logging.info(f"ValueError: {ve}")
+        return None
