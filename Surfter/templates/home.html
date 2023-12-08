@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div style="text-align: center; margin-top: 50px;">
+<div style="text-align: center; margin-top: 50px; font-family: 'Courier New', Courier, monospace; font-weight: bold;">
     {% if user.is_authenticated %}
         <h1>Hello {{user.username}}, welcome back to Surfter v0.2!</h1>
     {% else %}
@@ -12,13 +12,15 @@
     <form action="SurftResults" method="post" style="margin-top: 20px;">
 
         {% csrf_token %}
-
-        <label for="queryprompt">What do you want to know?</label><br>
-        <input type="text" name="queryprompt" style="width: 300px;"><br>
-
-        <label for="num2">How deep to go?</label><br>
+        
+        <br>
+        <label for="queryprompt" style="font-family: 'Courier New', Courier, monospace; font-weight: bold;">What do you want to know?</label><br>
+        <input type="text" name="queryprompt" style="width: 333px;"><br>
+        <br>
+        <br>
+        <label for="num2" style="font-family: 'Courier New', Courier, monospace; font-weight: bold;">How deep to go?</label><br>
         <input type="text" name="num2" style="width: 50px;"><br>
-
+        <br>
         <input type="submit" style="margin-top: 20px; padding: 10px 20px; background-color: cyan; color: black; border: none; border-radius: 5px; cursor: pointer;">
 
     </form>
