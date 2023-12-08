@@ -11,7 +11,9 @@
 
 {% for article in articlecollection  %}
         <tr>
-            <td class="myCellStyle1">{{ article.URL }}</td>
+            <td class="myCellStyle1">
+                <a href="{{ article.URL }}" target="_blank">{{ article.URL }}</a>
+            </td>
             <td class="myCellStyle1">{{article.AItext}}</td>
             <td class="myCellStyle2">{{article.Text}}</td>
         </tr>
