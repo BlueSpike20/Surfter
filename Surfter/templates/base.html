@@ -70,7 +70,7 @@
     </a>
     
     {% if user.is_authenticated %}
-    <li>Hello, {{user.first_name}} <button>Your Surfts WIP</button></li>
+    <li>Hello, {{user.first_name}}<a href="{% url 'Surfting' %}"><button>Your Surfts WIP</button></a></li>
     <li><a href="{% url 'logout' %}"><button>Logout</button></a></li>
     {% else %}
     <a href="{% url 'register' %}">

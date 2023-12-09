@@ -19,5 +19,9 @@ class Article(models.Model):
         #self.PIC_Array = PIC_Array
         AItext = models.TextField()
         QualityArticle = models.BooleanField(default=False)
+
+
+class SurftStatus(models.Model):
+    is_running = models.BooleanField(default=False)
     
 

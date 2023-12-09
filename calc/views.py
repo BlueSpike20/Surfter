@@ -8,6 +8,8 @@ import requests
 import logging
 import openai
 import time
+from .tasks import run_surft_results
+from .models import SurftStatus
 
 from bs4 import BeautifulSoup
 
@@ -16,6 +18,20 @@ from bs4 import BeautifulSoup
 
 def home(request):
     return render(request, 'home.html', {'name': 'Stranger'})
+  
+def Surfting(request):
+    # Set the status to running
+    SurftStatus.objects.update(is_running=True)
+    
+    # Start the Celery task asynchronously
+    # For simplicity, let's use a synchronous approach for now.
+
+    #TODO #async Would love to figure this shiza out
+    #result = run_surft_results.delay(request.POST["queryprompt"], int(request.POST["num2"]))
+    
+    # If the SurftResults function has finished, I want to redirect the user to the results.html page and stop the looping thread
+    return render(request, 'surfting.html')
+
 
 def GetArray(query, num_results):
     results = []
@@ -33,10 +49,10 @@ def register(request):
 def SurftResults(request):
 
     # Will this run cost money and use ChatGPT?
-    SpendMoney = False
+    SpendMoney = True
 
     # Am I in trouble with google?
-    GoogleTrouble = True
+    GoogleTrouble = False
 
     # Define your prompt to ChatGPT
     FrontOfPrompt = "Please analyze the following article for tone, accuracy, bias, and motivation, then summarize everything into a no more than 50 word response: " 
