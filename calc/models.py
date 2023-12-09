@@ -17,7 +17,7 @@ class Article(models.Model):
         Text = models.TextField()
         img = models.ImageField(upload_to='pics', default='tempString')
         #self.PIC_Array = PIC_Array
-        AItext = models.CharField(max_length=100)
+        AItext = models.TextField()
         QualityArticle = models.BooleanField(default=False)
     
 
