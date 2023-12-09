@@ -6,7 +6,6 @@
     <tr>
         <th class="myHeaderStyle1">Article URL and Pic</th>
         <th class="myHeaderStyle1"> You Surft : {{query}} {{depth}} deep! </th>
-        <th class="myHeaderStyle2">Raw Text</th>
     </tr>
 
 {% for article in articlecollection  %}
@@ -15,7 +14,6 @@
                 <a href="{{ article.URL }}" target="_blank">{{ article.URL }}</a>
             </td>
             <td class="myCellStyle1">{{article.AItext}}</td>
-            <td class="myCellStyle2">{{article.Text}}</td>
         </tr>
 {% endfor %} 
 

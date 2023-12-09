@@ -7,13 +7,12 @@ import html
 import requests
 import logging
 import openai
+import time
 
 from bs4 import BeautifulSoup
 
-# Create your views here, and this seems to work when http://127.0.0.1:8000/home called.
+# Create your views here:
 
-#Defining some global style values:
-#cell_style1 = "padding: 10px; border: 2px solid black; text-align: left; vertical-align: top; font-family: Arial, sans-serif; font-size: 20px;"
 
 def home(request):
     return render(request, 'home.html', {'name': 'Stranger'})
@@ -34,7 +33,10 @@ def register(request):
 def SurftResults(request):
 
     # Will this run cost money and use ChatGPT?
-    SpendMoney = True
+    SpendMoney = False
+
+    # Am I in trouble with google?
+    GoogleTrouble = True
 
     # Define your prompt to ChatGPT
     FrontOfPrompt = "Please analyze the following article for tone, accuracy, bias, and motivation, then summarize everything into a no more than 50 word response: " 
@@ -49,20 +51,31 @@ def SurftResults(request):
     analysis = Analysis(query = queryprompt)
     analysis.save()
 
-    #Get the raw URLs from GoogleSearcher.GetArray to be Surfted
-    URLsGotten = GetArray(queryprompt, How_many_URLs_to_get * 2)
-    URLsGotten = URLsGotten[:How_many_URLs_to_get]  # Keep x elements elements
+
+     
+    #Have the ability to turn off reliance on google to continue dev:
+    if GoogleTrouble == True:
+       TroubledURLsGotten = ["https://en.wikipedia.org/wiki/Internet_censorship_in_the_United_States"] * How_many_URLs_to_get
+
+    else:
+        #Get the raw URLs from GoogleSearcher.GetArray to be Surfted
+        URLsGotten = GetArray(queryprompt, How_many_URLs_to_get * 2)
+
     GoodURLs = []
     
-    #TODO: Include the real vetting of URLs
-    #Go through URLsGotten and get good ones back
-    for i, url in enumerate(URLsGotten):
-        #logging.debug("===About to run good_url===")
-        good_url = discern_good_url(url, i)
-        #good_url = True
-        #logging.debug("===About to append to GoodURLs===")
-        if good_url and good_url not in GoodURLs:
-            GoodURLs.append(good_url)
+    #Check to see if I'm in trouble...
+    if GoogleTrouble:
+        GoodURLs = TroubledURLsGotten
+        
+    else:
+        #Go through URLsGotten and get good ones back
+        for i, url in enumerate(URLsGotten):
+            #logging.debug("===About to run good_url===")
+            good_url = discern_good_url(url, i)
+            #logging.debug("===About to append to GoodURLs===")
+
+            if good_url and good_url not in GoodURLs:
+                GoodURLs.append(good_url)
 
     # Create an empty list to store Article objects
     ArticleCollection = []
@@ -84,14 +97,16 @@ def SurftResults(request):
         #logging.info(f"article {i}'s URL is: {ArticleCollection[i].URL}")
 
         processedtext = process_url_into_text(url, i, ArticleCollection)
-        print("=   LOTS OF TEXT INCOMING  =")
-        print("==  --------------------  ==")
-        print(processedtext)
-        print("== That was a lot of text! ==")
-        print("=   --------------------    =")
+        # print("=   LOTS OF TEXT INCOMING  =")
+        # print("==  --------------------  ==")
+        # print(processedtext)
+        # print("== That was a lot of text! ==")
+        # print("=   --------------------    =")
         
 
         if processedtext is not None:
+            #TODO Surface this value for clipping the huge articles
+            processedtext[:1000] 
             article.save()
         else:
             # Handle the case where processedtext is None
@@ -114,20 +129,14 @@ def SurftResults(request):
             else:
                 article.AItext = "Default AI text or any appropriate handling"
         
-            print("=   LOTS OF TEXT INCOMING  =")
-            print("==  --------------------  ==")
-            print(ai_text_response)
-            print("== That was a lot of text! ==")
-            print("=   --------------------    =")
+            # print("=   LOTS OF TEXT INCOMING  =")
+            # print("==  --------------------  ==")
+            # print(ai_text_response)
+            # print("== That was a lot of text! ==")
+            # print("=   --------------------    =")
             
             article.save()
-        
 
-        
-
-    #ArticleCollection = Article.objects.all()
-
-    #TODO: I removed, <, 'article1': article1> from the following context line till I understand what objects to pass
     context = {'query': queryprompt, 'depth': How_many_URLs_to_get, 'goodurls':GoodURLs, 'articlecollection': ArticleCollection}
     return render(request, 'results.html', context)
 
@@ -165,11 +174,12 @@ def use_soup_with_timeout(url, timeout=2):
 def process_url_into_text(url, i, ArticleCollection):
     soup = use_soup_with_timeout(url)
     if soup:
-        #article.Text = []
         ArticleCollection[i].Text = soup
+        
+        time.sleep(1)
+        
         return soup
     else:
-        #article.Text = []
         ArticleCollection[i].Text = f" :( See Failure for {url} in log..."
         return None
 
