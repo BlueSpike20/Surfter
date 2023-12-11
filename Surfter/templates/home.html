@@ -4,12 +4,12 @@
 
 <div style="text-align: center; margin-top: 50px; font-family: 'Courier New', Courier, monospace; font-weight: bold;">
     {% if user.is_authenticated %}
-        <h1>Hello {{user.username}}, welcome back to Surfter v0.2!</h1>
+        <h1>Hello {{user.username}}, welcome back to Surfter v0.3!</h1>
     {% else %}
         <h1>Hello stranger, welcome to Surfter v0.3!</h1>
     {% endif %}
 
-    <form action="SurftResults" method="post" style="margin-top: 20px;">
+    <form action="surfting" method="post" style="margin-top: 20px;">
 
         {% csrf_token %}
         
@@ -22,15 +22,15 @@
         <input type="text" name="num2" style="width: 50px;"><br>
         <br>
         <a>
-            <button> Surft </button>
+            <button> Surft, but broken in this build. </button>
         </a>
 
     </form>
 
 
-    <a href="{% url 'Surfting' %}">
+<!--     <a href="{% url 'surfting' %}">
         <button>Surft async WIP</button>
-    </a>
+    </a> -->
 
 
 </div>

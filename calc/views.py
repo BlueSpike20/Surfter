@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.management import call_command
 from django.http import HttpResponse
 from .models import Article
 from .models import Analysis
@@ -8,30 +9,32 @@ import requests
 import logging
 import openai
 import time
-from .tasks import run_surft_results
+import pika
 from .models import SurftStatus
-
 from bs4 import BeautifulSoup
+from celery import shared_task
+from .models import Article, Analysis
+from celery.result import AsyncResult
+from django.http import JsonResponse
 
 # Create your views here:
+
+# Global variable to check if the process is running
+is_running = False
+
 
 
 def home(request):
     return render(request, 'home.html', {'name': 'Stranger'})
   
-def Surfting(request):
-    # Set the status to running
-    SurftStatus.objects.update(is_running=True)
-    
-    # Start the Celery task asynchronously
-    # For simplicity, let's use a synchronous approach for now.
+def surfting(request):
+    data = request.POST
+    task = SurftResults.delay(data)
+    return render(request, 'surfting.html', {'task_id': task.id})
 
-    #TODO #async Would love to figure this shiza out
-    #result = run_surft_results.delay(request.POST["queryprompt"], int(request.POST["num2"]))
-    
-    # If the SurftResults function has finished, I want to redirect the user to the results.html page and stop the looping thread
-    return render(request, 'surfting.html')
 
+def register(request):
+    return render(request, 'accounts/register.html', {'name': 'BlueSpike'})
 
 def GetArray(query, num_results):
     results = []
@@ -41,18 +44,27 @@ def GetArray(query, num_results):
     return results
     print(results)
 
-def register(request):
-    return render(request, 'accounts/register.html', {'name': 'BlueSpike'})
+def get_task_info(request):
+    task_id = request.GET.get('task_id', None)
+    if task_id is None:
+        return JsonResponse({'error': 'Task ID not provided'})
 
+    task = AsyncResult(task_id)
+    response_data = {
+        'task_status': task.status,
+        'task_result': task.result,
+    }
+    return JsonResponse(response_data)
 
+@shared_task
 ### This is the meat of Surfter ###
 def SurftResults(request):
 
     # Will this run cost money and use ChatGPT?
-    SpendMoney = True
+    SpendMoney = False
 
     # Am I in trouble with google?
-    GoogleTrouble = False
+    GoogleTrouble = True
 
     # Define your prompt to ChatGPT
     FrontOfPrompt = "Please analyze the following article for tone, accuracy, bias, and motivation, then summarize everything into a no more than 50 word response: " 

@@ -66,12 +66,12 @@
       
     <!-- Use an anchor tag instead of a form -->
     <a href="{% url 'home' %}">
-    <button>Home Surft</button>
+    <button>Home</button>
     </a>
     
     {% if user.is_authenticated %}
-    <li>Hello, {{user.first_name}}<a href="{% url 'Surfting' %}"><button>Your Surfts WIP</button></a></li>
-    <li><a href="{% url 'logout' %}"><button>Logout</button></a></li>
+    <a href="{% url 'surfting' %}"><button>{{user.first_name}}'s surfts</button></a>
+    <a href="{% url 'logout' %}"><button>Logout</button></a>
     {% else %}
     <a href="{% url 'register' %}">
         <button>Register here to Surft</button>
