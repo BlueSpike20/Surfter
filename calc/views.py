@@ -16,6 +16,7 @@ from celery import shared_task
 from .models import Article, Analysis
 from celery.result import AsyncResult
 from django.http import JsonResponse
+from django.contrib import messages
 
 # Create your views here:
 
@@ -28,7 +29,9 @@ def home(request):
     return render(request, 'home.html', {'name': 'Stranger'})
   
 def surfting(request):
-    data = request.POST
+    data = request.POST.dict()
+    print(data)
+    messages.info(request, 'In the surfting function')
     task = SurftResults.delay(data)
     return render(request, 'surfting.html', {'task_id': task.id})
 
@@ -59,6 +62,8 @@ def get_task_info(request):
 @shared_task
 ### This is the meat of Surfter ###
 def SurftResults(request):
+    is_running = True
+    messages.info(request, 'Starting SurftResults')
 
     # Will this run cost money and use ChatGPT?
     SpendMoney = False
@@ -157,13 +162,27 @@ def SurftResults(request):
             else:
                 article.AItext = "Default AI text or any appropriate handling"
         
-            # print("=   LOTS OF TEXT INCOMING  =")
-            # print("==  --------------------  ==")
-            # print(ai_text_response)
-            # print("== That was a lot of text! ==")
-            # print("=   --------------------    =")
+            print("=   LOTS OF TEXT INCOMING  =")
+            print("==  --------------------  ==")
+            print(ai_text_response)
+            print("== That was a lot of text! ==")
+            print("=   --------------------    =")
             
             article.save()
+            
+            # Assuming taskId is defined somewhere
+            taskId = "your-task-id"
+
+            response = requests.post('/get_task_info/', data={'task_id': taskId})
+
+            # Ensure the request was successful
+            if response.status_code == 200:
+                data = response.json()
+                if data['task_status'] == 'SUCCESS':
+                    # Do something here
+                    pass
+
+            return JsonResponse({'status': 'done'})
 
     context = {'query': queryprompt, 'depth': How_many_URLs_to_get, 'goodurls':GoodURLs, 'articlecollection': ArticleCollection}
     return render(request, 'results.html', context)
