@@ -8,8 +8,10 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('surfting', views.surfting, name='surfting'),
-    path('get_task_info/', views.get_task_info, name='get_task_info'),
+    path('surfting/', views.surfting, name='surfting'),
+    path('check_task_status/', views.check_task_status, name='check_task_status'),
+    path('surfting/<int:surfter_task_id>/', views.surfting, name='surfting'),
+    path('results/', views.results, name='results')
 ]
 
 urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

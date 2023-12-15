@@ -70,7 +70,7 @@
     </a>
     
     {% if user.is_authenticated %}
-    <a href="{% url 'surfting' %}"><button>{{user.first_name}}'s surfts</button></a>
+    <button>{{user.first_name}}'s surfts</button></a>
     <a href="{% url 'logout' %}"><button>Logout</button></a>
     {% else %}
     <a href="{% url 'register' %}">

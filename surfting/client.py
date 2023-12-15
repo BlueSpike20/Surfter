@@ -2,6 +2,7 @@ import pika
 from pika.exchange_type import ExchangeType
 import uuid
 
+
 def on_reply_message_received(ch, method, properties, body):
     print(f"reply received: {body}")
 

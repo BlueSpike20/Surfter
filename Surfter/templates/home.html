@@ -9,7 +9,7 @@
         <h1>Hello stranger, welcome to Surfter v0.3!</h1>
     {% endif %}
 
-    <form action="surfting" method="post" style="margin-top: 20px;">
+    <form action="/surfting/" method="POST" style="margin-top: 20px;">
 
         {% csrf_token %}
         
@@ -21,16 +21,11 @@
         <label for="num2" style="font-family: 'Courier New', Courier, monospace; font-weight: bold;">How deep to go?</label><br>
         <input type="text" name="num2" style="width: 50px;"><br>
         <br>
-        <a>
-            <button> Surft, but broken in this build. </button>
-        </a>
+        <button type="submit"> Surft </button>
+        <!-- Add this line to include surfter_task_id in the POST data -->
+        
 
     </form>
-
-
-<!--     <a href="{% url 'surfting' %}">
-        <button>Surft async WIP</button>
-    </a> -->
 
 
 </div>
