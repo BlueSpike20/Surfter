@@ -62,7 +62,7 @@ def surfting(request):
         #task = SurftResults.delay(queryprompt, How_many_URLs_to_get)
         task = SurftResults.delay(queryprompt, How_many_URLs_to_get)
         surfter_task_id = task.id
-        messages.info(request, f'queryprompt = {task.status}')
+        messages.info(request, f'task.status = {task.status}')
 
         messages.info(request, f'surfter_task_id has been promoted from 666 to: {task.id}')
     else:
@@ -77,7 +77,7 @@ def surfting(request):
 
     #return render(request, 'surfting.html', {'task_id': task_id})
     time.sleep(1)
-    messages.info(request, f'In the hard to understand surfting function')
+    #messages.info(request, f'In the hard to understand surfting function')
     #return redirect('/surfting/?task_id=' + task_id)
     #return redirect('surfting', {'task_id': task_id})
     return render(request, 'surfting.html', {'surfter_task_id': surfter_task_id, 'queryprompt': queryprompt, 'How_many_URLs_to_get': How_many_URLs_to_get})
