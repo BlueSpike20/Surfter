@@ -8,14 +8,15 @@
         <th class="myHeaderStyle1"> You Surft : {{queryprompt}} {{How_many_URLs_to_get}} deep! </th>
     </tr>
 
-{% for article in articlecollection  %}
-        <tr>
-            <td class="myCellStyle1">
-                <a href="{{ article.URL }}" target="_blank">{{ article.URL }}</a>
-            </td>
-            <td class="myCellStyle1">{{article.AItext}}</td>
-        </tr>
-{% endfor %} 
+    {% for article in articlecollection %}
+    <tr>
+        <td class="myCellStyle1">
+            <a href="{{ article.URL }}" target="_blank">{{ article.URL }}</a>
+            <img src="{{ article.img }}" alt="Image" style="max-width: 100%; height: auto;">
+        </td>
+        <td class="myCellStyle1">{{article.AItext}}</td>
+    </tr>
+    {% endfor %}
 
 </table>
 

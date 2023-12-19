@@ -85,7 +85,6 @@ def SurftResults(queryprompt, How_many_URLs_to_get):
             #logging.debug("===About to run good_url===")
             good_url = discern_good_url(url, i)
             #logging.debug("===About to append to GoodURLs===")
-
             if good_url and good_url not in GoodURLs:
                 GoodURLs.append(good_url)
 
@@ -96,12 +95,11 @@ def SurftResults(queryprompt, How_many_URLs_to_get):
     for i, url in enumerate(GoodURLs):
         # For now, let's assume you have some dummy text and PIC_Array for each article
         dummyText = "Placeholder article text"
-        #process_url_into_image_url(ArticleCollection[i], i)
-        #dummy_pic_array = [f"pic_url_{j}" for j in range(len(GoodURLs))] # Just a dummy list of pic URLs
+        dummy_pic = f"dummy pic URL {i+1}"
         dummy_aitext = f"Compwizdom for article {i+1}"
         
         # Create an Article object
-        article = Article(query = queryprompt, URL = url, Text = dummyText, AItext = dummy_aitext, QualityArticle = False)
+        article = Article(query = queryprompt, URL = url, Text = dummyText, AItext = dummy_aitext, QualityArticle = False, img = dummy_pic)
         article.save()
         
         # Add the article to the collection
@@ -109,6 +107,7 @@ def SurftResults(queryprompt, How_many_URLs_to_get):
         #logging.info(f"article {i}'s URL is: {ArticleCollection[i].URL}")
 
         processedtext = process_url_into_text(url, i, ArticleCollection)
+        process_url_into_image_url(url, i, ArticleCollection)
         # print("=   LOTS OF TEXT INCOMING  =")
         # print("==  --------------------  ==")
         # print(processedtext)
@@ -267,3 +266,67 @@ def GetArray(query, num_results):
         results.append(result)
     return results
     print(results)
+
+def use_soup_pic_with_timeout(url, timeout=2):
+    try:
+        response = requests.get(url, timeout=timeout)
+        if response.status_code >= 400:
+            print(f"Warning: {url} returned status code {response.status_code}")
+            response.raise_for_status()  # Raise an exception for other errors (e.g., network issues)
+            pass
+        return get_pic_urls(url)
+        
+    except requests.exceptions.Timeout:
+        print(f"Timeout while accessing {url}")
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error accessing {url}: {e}")
+        return None
+    
+def get_pic_urls(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    image_tags = soup.find_all('img')
+    
+    # Limit the number of image_tags before the loop
+    image_tags = image_tags   
+    image_urls = []  # Use a list instead of a dictionary to store image URLs
+    logging.debug("Starting get_pic_urls for loop!")
+    
+    for img in image_tags:
+        if 'src' in img.attrs:
+            image_url = img['src']
+            image_urls.append(image_url)
+            
+            
+
+            logging.debug(image_url + " In the get_pic_urls loop!")
+
+    
+    if not image_urls:  # Check if image_urls is empty
+        return 'image_urls returned Null'  # or some default value
+
+    # Find the largest image in image_urls
+    largest_image_url = max(image_urls, key=lambda url: get_image_size(url))
+    
+    if not largest_image_url:  # Return "nothing found" only if no image URLs were found
+        return "nothing found"
+
+    #print(image_urls)
+    #logging.debug(image_urls)
+    logging.debug("Right before 'return image_urls'")
+    #input()
+    return largest_image_url
+
+def get_image_size(url):
+    response = requests.head(url)
+    content_length = response.headers.get('content-length')
+    return int(content_length) if content_length else 0
+
+def process_url_into_image_url(url, i, ArticleCollection):
+    soup = use_soup_pic_with_timeout(url) 
+    if soup:
+        ArticleCollection[i].img = soup
+    else:
+        ArticleCollection[i].img =":( See Failure in log..."
+        logging.info(ArticleCollection[i].img + ' failed soup_pic')

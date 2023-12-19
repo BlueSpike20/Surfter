@@ -15,7 +15,7 @@ class Article(models.Model):
         query = models.CharField(max_length=200)
         URL = models.CharField(max_length=200)
         Text = models.TextField()
-        img = models.ImageField(upload_to='pics', default='tempString')
+        img = models.TextField(max_length=200)
         #self.PIC_Array = PIC_Array
         AItext = models.TextField()
         QualityArticle = models.BooleanField(default=False)
