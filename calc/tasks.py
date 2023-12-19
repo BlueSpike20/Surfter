@@ -22,19 +22,7 @@ from celery.result import AsyncResult
 from django.contrib import messages
 import requests
 
-# @shared_task
-# def celery_task(counter):
-#     email = "hassanzadeh.sd@gmail.com"
-#     time.sleep(30)
-#     return '{} Done!'.format(counter)
-
-
-@shared_task
-### This is a dummy function to test celery ###
-def CeleryTest(queryprompt, How_many_URLs_to_get):
-    return 'Task completed successfully'
-
-
+#client = openai()
 
 @shared_task
 ### This is the meat of Surfter ###
@@ -42,7 +30,6 @@ def SurftResults(queryprompt, How_many_URLs_to_get):
     #is_running = True
     print('Starting SurftResults task')
     
-
 
     # Will this run cost money and use ChatGPT?
     SpendMoney = True
@@ -62,6 +49,7 @@ def SurftResults(queryprompt, How_many_URLs_to_get):
 
     analysis = Analysis(query = queryprompt)
     analysis.save()
+    collection_of_article_text = []
 
 
      
@@ -140,16 +128,21 @@ def SurftResults(queryprompt, How_many_URLs_to_get):
             else:
                 article.AItext = "Default AI text or any appropriate handling"
         
-            print("=   LOTS OF TEXT INCOMING  =")
-            print("==  --------------------  ==")
-            print(ai_text_response)
-            print("== That was a lot of text! ==")
-            print("=   --------------------    =")
+            #print("=   LOTS OF TEXT INCOMING  =")
+            #print("==  --------------------  ==")
+            #print(ai_text_response)
+            #print("== That was a lot of text! ==")
+            #print("=   --------------------    =")
             
             article.save()
+            collection_of_article_text.append(article.AItext)
 
-
-    context = {'query': queryprompt, 'depth': How_many_URLs_to_get, 'goodurls':GoodURLs, 'articlecollection': ArticleCollection}
+    analysis.analysis = do_hyperanalysis_on_collection_of_article_text(collection_of_article_text)
+    analysis.save()
+    analysis.img = do_dalle_magic_on_query(analysis)  
+    print(analysis.analysis)
+    
+    #context = {'query': queryprompt, 'depth': How_many_URLs_to_get, 'goodurls':GoodURLs, 'articlecollection': ArticleCollection}
     return 'Task completed successfully'  # Return a success message
 
 #Turns the paragragh text at the given URL into readable text.
@@ -231,7 +224,7 @@ def generate_response(combinedprompt):
             {"role": "system", "content": "You are a helpful assistant with the subtle personality of an enlightned and wise surfer."},
             {"role": "user", "content": "I would you you to summarize the following article and comment using your personality: "},
             {"role": "assistant", "content": "Fo' sho"},
-            {"role": "user", "content": "And please limit your total response to 50 words"},
+            {"role": "user", "content": "And please limit your total response to 100 words"},
             {"role": "user", "content": combinedprompt},
         ],
     )
@@ -330,3 +323,42 @@ def process_url_into_image_url(url, i, ArticleCollection):
     else:
         ArticleCollection[i].img =":( See Failure in log..."
         logging.info(ArticleCollection[i].img + ' failed soup_pic')
+
+def do_hyperanalysis_on_collection_of_article_text(collection_of_article_text):
+    hyperanalysis_question = 'Please create an overall summary from the following micro-summaries: '
+    for i, article_text in enumerate(collection_of_article_text):
+        hyperanalysis_question += f'Article {i+1}: {article_text}\n'
+    print(hyperanalysis_question)
+    hyperanalysis_response = generate_hyper_response(hyperanalysis_question)
+    return hyperanalysis_response
+
+def generate_hyper_response(hyperanalysis_question):
+    openai.api_key = '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'
+    #client = openai(api_key=api_key)
+
+    completion = openai.chat.completions.create(
+        model="gpt-3.5-turbo-16k",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant with the subtle personality of an enlightned and wise surfer."},
+            {"role": "user", "content": f"I would you like you to comment using your personality: "},
+            {"role": "assistant", "content": "I got you, fam, I'll make a holistic summary of the micro-summaries you gave me. I will definately give numerical answers when possible."},
+            {"role": "user", "content": "And please limit your total response to 40 words"},
+            {"role": "user", "content": hyperanalysis_question},
+        ],
+    )
+
+    #print(completion.choices[0].message.content)
+    return completion.choices[0].message.content
+
+#TODO figure out this bit :D
+def do_dalle_magic_on_query(analysis):
+    response = client.images.generate(
+    model="dall-e-3",
+    prompt="a robot surfer on a wave of information",
+    size="1024x1024",
+    quality="standard",
+    n=1,
+    )
+
+    image_url = response.data[0].url
+    return image_url

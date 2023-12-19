@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<table>
+    <tr>
+        <th class="myHeaderStyle1">Surft Results</th>
+        <th class="myHeaderStyle2"> Article Pic </th>
+    </tr>
+
+    {% for analysis in trimmed_allanalysis %}
+    <tr>
+        <td class="myCellStyle1">
+            <strong>{{analysis.query}}</strong>
+            <br>
+            <br>
+            {{ analysis.analysis }}
+        </td>
+        <td class="myCellStyle2">{{article.AItext}}
+        <img src="{% static 'TempHyperAnalysis.jpg' %}" alt="Image" style="max-width: 100%; height: auto;">
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}

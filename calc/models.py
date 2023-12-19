@@ -3,19 +3,19 @@ from django.db import models
 # Create your models here.
 
 class Analysis(models.Model):
-        query = models.CharField(max_length=200)
-        img = models.ImageField()
-        analysis = models.CharField(max_length=500)
+        query = models.CharField(max_length=256)
+        img = models.CharField(max_length=256)
+        analysis = models.TextField()
         semquad = models.CharField(max_length=256)
 
 
 #TODO: Reconcile how to include a list in this model,  self.PIC_Array = PIC_Array
 class Article(models.Model):
         # self.name = name TODO
-        query = models.CharField(max_length=200)
-        URL = models.CharField(max_length=200)
+        query = models.CharField(max_length=256)
+        URL = models.CharField(max_length=256)
         Text = models.TextField()
-        img = models.TextField(max_length=200)
+        img = models.TextField(max_length=256)
         #self.PIC_Array = PIC_Array
         AItext = models.TextField()
         QualityArticle = models.BooleanField(default=False)

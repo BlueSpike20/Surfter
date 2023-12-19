@@ -16,7 +16,6 @@ from celery.result import AsyncResult
 from django.http import JsonResponse
 from django.contrib import messages
 from calc.tasks import SurftResults
-from calc.tasks import CeleryTest
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -121,3 +120,8 @@ def results(request):
     How_many_URLs_to_get = request.session.get('How_many_URLs_to_get', 'default value')
     article_collection = Article.objects.filter(query=queryprompt)
     return render(request, 'results.html', {'articlecollection': article_collection, 'queryprompt': queryprompt, 'How_many_URLs_to_get': How_many_URLs_to_get})
+
+def savedsurfts(request):
+    AllAnalysis = Analysis.objects.all().order_by('-id')  # Order by 'id' in descending order
+    trimmed_allanalysis = AllAnalysis[:3]  # Get the first 3 items, which are the last 3 items in the original order
+    return render(request, 'savedsurfts.html', {'trimmed_allanalysis': trimmed_allanalysis})
