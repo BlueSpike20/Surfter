@@ -22,7 +22,6 @@ from celery.result import AsyncResult
 from django.contrib import messages
 import requests
 
-#client = openai()
 
 @shared_task
 ### This is the meat of Surfter ###
@@ -139,7 +138,7 @@ def SurftResults(queryprompt, How_many_URLs_to_get):
 
     analysis.analysis = do_hyperanalysis_on_collection_of_article_text(collection_of_article_text)
     analysis.save()
-    #analysis.img = do_dalle_magic_on_query(analysis)  
+
     print(analysis.analysis)
     
     #context = {'query': queryprompt, 'depth': How_many_URLs_to_get, 'goodurls':GoodURLs, 'articlecollection': ArticleCollection}
@@ -350,15 +349,3 @@ def generate_hyper_response(hyperanalysis_question):
     #print(completion.choices[0].message.content)
     return completion.choices[0].message.content
 
-#TODO figure out this bit :D
-""" def do_dalle_magic_on_query(analysis):
-    response = client.images.generate(
-    model="dall-e-3",
-    prompt="a robot surfer on a wave of information",
-    size="1024x1024",
-    quality="standard",
-    n=1,
-    )
-
-    image_url = response.data[0].url
-    return image_url """

@@ -1,0 +1,3 @@
+echo Starting DjangoServer...
+Start-Process cmd -ArgumentList "/k cd /d D:\code\surfter && venv\Scripts\activate && title SurfterVenv"
+echo DjangoServer started.
