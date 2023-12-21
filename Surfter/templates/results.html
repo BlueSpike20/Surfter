@@ -1,6 +1,28 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+
+<table>
+
+    <tr>
+        <th class="myHeaderStyle1">Surft Analysis</th>
+        <th class="myHeaderStyle2"> InfoPic </th>
+    </tr>
+    <tr>
+        <td class="myCellStyle1">
+            <strong>{{analysis.query}}</strong>
+            <br>
+            <br>
+            {{ analysis.analysis }}
+        </td>
+        <td class="myCellStyle2">
+            <img src="{% static 'TempHyperAnalysis.jpg' %}" alt="Image" style="max-width: 100%; height: auto;">
+        </td>
+    </tr>
+
+</table> 
+
 
 <table>
     <tr>
@@ -8,6 +30,7 @@
         <th class="myHeaderStyle1"> You Surft : {{queryprompt}} {{How_many_URLs_to_get}} deep! </th>
     </tr>
 
+    
     {% for article in articlecollection %}
     <tr>
         <td class="myCellStyle1">

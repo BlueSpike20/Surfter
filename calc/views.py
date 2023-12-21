@@ -1,24 +1,10 @@
 from django.shortcuts import render
-from django.core.management import call_command
-from django.http import HttpResponse
-from googlesearch import search
-import html
-import requests
-import logging
-import openai
 import time
-import pika
-from .models import SurftStatus
-from bs4 import BeautifulSoup
-from celery import shared_task
 from .models import Article, Analysis
 from celery.result import AsyncResult
 from django.http import JsonResponse
 from django.contrib import messages
 from calc.tasks import SurftResults
-from django.shortcuts import redirect
-from django.urls import reverse
-from django.http import HttpResponseRedirect
 
 
 # Create your views here:
@@ -119,7 +105,8 @@ def results(request):
     queryprompt = request.session.get('queryprompt', 'default value')
     How_many_URLs_to_get = request.session.get('How_many_URLs_to_get', 'default value')
     article_collection = Article.objects.filter(query=queryprompt)
-    return render(request, 'results.html', {'articlecollection': article_collection, 'queryprompt': queryprompt, 'How_many_URLs_to_get': How_many_URLs_to_get})
+    analysis = Analysis.objects.get(query=queryprompt)
+    return render(request, 'results.html', {'articlecollection': article_collection, 'queryprompt': queryprompt, 'How_many_URLs_to_get': How_many_URLs_to_get, 'analysis': analysis})
 
 def savedsurfts(request):
     AllAnalysis = Analysis.objects.all().order_by('-id')  # Order by 'id' in descending order
