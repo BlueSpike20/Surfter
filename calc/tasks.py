@@ -38,10 +38,7 @@ def SurftResults(queryprompt, How_many_URLs_to_get):
 
     # Define your prompt to ChatGPT
     FrontOfPrompt = "Please analyze the following article for tone, accuracy, bias, and motivation, then summarize everything into a no more than 50 word response: " 
-
-    # Set up OpenAI API credentials
-    #OpenAi.api_key = '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'
-    
+   
     #upon the user's post on the homepage the following data is captured and used:
     queryprompt = queryprompt
     How_many_URLs_to_get = How_many_URLs_to_get
@@ -214,7 +211,8 @@ def discern_good_url(url, timeout=2):
         return None
     
 def generate_response(combinedprompt):
-    openai.api_key = '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'
+    #Gotta put your own api key in here:
+    openai.api_key = ''
     #client = openai(api_key=api_key)
 
     completion = openai.chat.completions.create(
@@ -332,7 +330,8 @@ def do_hyperanalysis_on_collection_of_article_text(collection_of_article_text):
     return hyperanalysis_response
 
 def generate_hyper_response(hyperanalysis_question):
-    openai.api_key = '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'
+    #Gotta put your own api key in here:
+    openai.api_key = ''
     #client = openai(api_key=api_key)
 
     completion = openai.chat.completions.create(
