@@ -2,7 +2,10 @@ Surfter:
 Use AI to analyze user generated query results for accuracy, bias, motivation and logic, then produce a webpage with delightful and easily consumable Hyperanalysis and infographics.
 
 One must create a virtural environment and install the required modules in requirements.txt
-Then use these equiv HAX to make your hurt less:
+Then use these equiv HAX to make your head hurt less:
+
+Start Docker
+
 DjangoServer:
 Start-Process cmd -ArgumentList "/k cd /d D:\code\surfter && venv\Scripts\activate && title DjangoServer && python manage.py runserver"
 RabbitMQ:
